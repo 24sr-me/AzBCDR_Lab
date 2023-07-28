@@ -7,7 +7,7 @@ param rgName string = 'rg-${nameID}'
 param rgNameasr string = 'rg-${nameID}-asr'
 
 @description('Username for the Virtual Machine.')
-param adminUsername string = 'stu'
+param adminUsername string = 'bcdr'
 
 @description('Password for the Virtual Machine.')
 @minLength(12)
