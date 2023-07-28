@@ -2,7 +2,7 @@
 
 param prodlocation string = 'uksouth'
 param drlocation string = 'ukwest'
-param nameID string = utcNow('ddMMyyHHmm')
+param nameID string = utcNow('yyMMddHHmm')
 param rgName string = 'rg-${nameID}'
 param rgNameasr string = 'rg-${nameID}-asr'
 
@@ -175,10 +175,10 @@ module taregtRole './modules/asrpolicyroleassignement.bicep' = {
 }
 
 module publicips './modules/publicIP.bicep' =  [for i in vms:{
-  name: 'deploy-vm-${i.name}-pip'
+  name: 'pip-deploy-vm-${i.name}'
   scope: rgasr
   params: {
-    publicIpName: 'dr-${i.name}_pip'
+    publicIpName: 'pip-dr-${i.name}'
     dnsName: i.name
   }
   dependsOn: [
@@ -217,7 +217,7 @@ module trafficmanager './modules/trafficmanager.bicep' = {
   scope: rg
   params: {
     uniqueDnsName: 'trafficmanager-${nameID}'
-    name: 'trafficmanager-${nameID}'
+    name: 'traf-${nameID}'
     prodlocation: prodlocation
     drlocation: drlocation
     prodep1: winvm[0].outputs.outID
