@@ -30,7 +30,7 @@ param subnetName string = 'default'
 param virtualNetworkName string
 
 var nicName = '${vmName}_nic'
-var publicIpName = '${vmName}_pip'
+var publicIpName = 'pip-${vmName}'
 
 param vaultName string
 param rsvid string
