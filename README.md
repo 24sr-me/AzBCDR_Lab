@@ -117,7 +117,7 @@ Resource Groups are created in the defined production and DR locations. These ar
 
 Three virtual networks are created, one in production and two in DR with the following setting:
 
-- | Production | Disaster Recovery | Testing
+ &nbsp; | Production | Disaster Recovery | Testing
 --- | --- | --- | ---
 Name | vnet-\<nameID>-prod | vnet-\<nameID>-dr | vnet-\<nameID>-test
 Subet | default | default | default
@@ -126,6 +126,7 @@ Address Prefix | 10.1.0.0/24 | 10.2.0.0/24 | 10.3.0.0/24
 Remote Peer | vnet-\<nameID>-dr | vnet-\<nameID>-prod | none
 
 Each VNET template also deploys a Network Security Group with a rule to allow port 80 inbound.
+
 ## Recovery Service Vaults
 
 Two Recovery Service Vaults are deployed. One in production used for backup of virtual machines and one in the DR location used by Azure Site Recovery for replication of VMs.
