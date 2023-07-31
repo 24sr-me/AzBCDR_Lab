@@ -14,6 +14,8 @@ The following resources will be deployed:
 - Network Security Groups in both production and DR, attched to subnets.
 - assignment of built in policy "Configure disaster recovery on virtual machines by enabling replication via Azure Site Recovery".
 
+![Logical Layout](scr/layout.jpg)
+
 ## Deployment
 
 ### Powershell
@@ -48,6 +50,7 @@ Post deployment further configuration is required for a smoother demonstration o
 # Disaster Recovery Demo Guide
 ## Prep
 Prior to testing collect the following information from the deployment:
+
 - From rg-\<nameID>
   - traf-\<namdID> collect DNS name
   - vm-\<namdID>-1 and vm-\<namdID>-1 collect Public IP address
