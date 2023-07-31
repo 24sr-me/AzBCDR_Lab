@@ -4,66 +4,66 @@ This repo contains the required bicep files to deploy a full lab environment for
 
 The following resources will be deployed:
 
-- One Resource Group for production and one for recovery
-- separate VNETs for production, recovery and test
-- two Virtual Machines in production running webapp
-- Recovery Services Vault in production region used for backup of Virtual Machines
-- Recovery Services Vault in second region used for Azure Site REcovery replication of Virtual Machines
+- Two Resource Groups. One in the production region and one in the recovery region.
+- Separate VNETs for production, recovery and test.
+- Two Virtual Machines in production running webapp.
+- Recovery Services Vault in production region used for backup of Virtual Machines.
+- Recovery Services Vault in second region used for Azure Site Recovery replication of Virtual Machines.
 - Traffic Manager for automatic failover of users between production and DR
-- Public IP addresses to be used for Virtual Machines in both production, DR and testing
-- Network Security Groups in both production and DR, attched to subnets
-- assignment of built in policy "Configure disaster recovery on virtual machines by enabling replication via Azure Site Recovery"
+- Public IP addresses to be used for Virtual Machines in both production, DR and testing.
+- Network Security Groups in both production and DR, attched to subnets.
+- assignment of built in policy "Configure disaster recovery on virtual machines by enabling replication via Azure Site Recovery".
 
 ## Deployment
 
 ### Powershell
 
-Log in to Azure using ```Connect-AzAccount```
-Set the taregt subscription using ```Set-AzSubscription```
-Deploy from template with ```New-AzSubscriptionDeployment -TemplateFile main.bicep```
-Input target region for production
-Input password for Virtual Machines
+- Log in to Azure using ```Connect-AzAccount```
+- Set the taregt subscription using ```Set-AzSubscription```
+- Deploy from template with ```New-AzSubscriptionDeployment -TemplateFile main.bicep```
+- Input target region for production
+- Input password for Virtual Machines
 
 ### Azure CLI
 
-Log in to Azure using ```az login```
-Set the taregt subscription using ```az account set```
-Deploy from template with ```az deployment sub create --location <prod_location> --template-file .\main.bicep```
-Input password for Virtual Machines
+- Log in to Azure using ```az login```
+- Set the taregt subscription using ```az account set```
+- Deploy from template with ```az deployment sub create --location <prod_location> --template-file .\main.bicep```
+- Input password for Virtual Machines
 
 ## Configuration
 
 Post deployment further configuration is required for a smoother demonstration of seamless failover. On each VM the following settings should be changed:
 
-From Azure Portal, go to Virtual Machine
-Under Ooperations select Disaster Recovery
-Under General select Network
-From top menu select Edit
-Change "Test failover network" to the testing VNET
-Under General Settings > Test failover settings set subnet to default
-Under Primary IP Configuration Test failover settings and Failover settings set Public IP to pip-dr-vm-\<nameID>-1
-From top menu select Save
-Repeat for second VM
+- From **Azure Portal**, go to **Virtual Machine**
+- Under **Operations** select **Disaster Recovery**
+- Under **General** select **Network**
+- From top menu select **Edit**
+- Change **"Test failover network"** to the testing VNET
+- Under **General Settings > Test failover** settings set subnet to default
+- Under **Primary IP Configuration** set test failover settings and failover settings set Public IP to pip-dr-vm-\<nameID>-1
+- From top menu select **Save**
+- Repeat for second VM
 
 # Disaster Recovery Demo Guide
 ## Prep
 Prior to testing collect the following information from the deployment:
-From rg-\<nameID>
-traf-\<namdID> collect DNS name
-vm-\<namdID>-1 and vm-\<namdID>-1 collect Public IP address
-From rg-\<nameID>-asr
-pip-dr-<namdID>-1 amd pip-dr-<namdID>-2
+- From rg-\<nameID>
+  - traf-\<namdID> collect DNS name
+  - vm-\<namdID>-1 and vm-\<namdID>-1 collect Public IP address
+- From rg-\<nameID>-asr
+  - pip-dr-\<namdID>-1 amd pip-dr-\<namdID>-2
 
 ## Pre-Failover Test
 Open a web browser and connect on port 80 to the DNS name of the traffic manager and both VM public IPs. VMs should display their own name and the region they are running from. Traffic Manager should rotate between both servers
 
 ## Test Failover
-In the Azure Portal browse to a demo VM > Operations > Disaster Recovery. Along the top menu bar select Test Failover. Use teh default settings for test.
+In the Azure Portal browse to a **demo VM > Operations > Disaster Recovery**. Along the top menu bar select **Test Failover**. Use teh default settings for test.
 Monitor the from portal. Once failover is complete connect to the relevant pubic IP address of the failed over server from a web browser on port 80. Server nam should be dispalyed with the recovery region.
 In Azure portal select Clean Up Failover
 
 ## Live Failover
-In the Azure Portal browse to a demo VM > Operations > Disaster Recovery. Along the top menu bar select Failover. Check that you understand the risk and continue. Check to shutdown machine before failing over/
+In the Azure Portal browse to a **demo VM > Operations > Disaster Recovery**. Along the top menu bar select Failover. Check that you understand the risk and continue. Check to shutdown machine before failing over/
 Monitor from portal. Once failover is complete connect to Traffic Manager to show that user connection path remains the same. If only one server is failed over interface should rotate between regions.
 
 ## Clean-up
@@ -72,34 +72,34 @@ To remove the demo environment backup and repliaction first need disabling:
 
 - Remove backup
   - Browse to production RSV
-  - Under select Protected Items > Backup Items > Azure Virtual Machines
-  - For each VM select the elipsis (...) > Stop Backup
+  - Under select **Protected Items > Backup Items > Azure Virtual Machines**
+  - For each VM select the elipsis (...) > **Stop Backup**
   - Select Delete backup data, enter server name and give a reason
 - Remove replication
   - Browse to recovery RSV
-  - Under select Protected Items > Replicated Items
-  - For each VM select the elipsis (...) > Disable Replication
+  - Under select **Protected Items > Replicated Items**
+  - For each VM select the elipsis (...) > **Disable Replication**
 - Delete both resource groups
 
 # Details
 
 ## Paramaters
 
-prodlocation - defined region for production side of environment. Defaults set to 'uksouth' but due to bicep limitation location still required to be set at run time.
+**prodlocation** - defined region for production side of environment. Defaults set to 'uksouth' but due to bicep limitation location still required to be set at run time.
 
-drlocation - region to be used for recovery. DR and testing resources to be deployed here..
+**drlocation** - region to be used for recovery. DR and testing resources to be deployed here. Default region UK West.
 
-namdID - sets unique value for resource naming. Defaults to current date/time using yyMMddHHmm format.
+**namdID** - sets unique value for resource naming. Defaults to current date/time using yyMMddHHmm format.
 
-rgname - resource group name for production resources. Defaults to rg-\<yyMMddHHmm>
+**rgname** - resource group name for production resources. Defaults to rg-\<yyMMddHHmm>
 
-rgnameasr - resource group name for DR and testing resources. Defaults to rg-\<yyMMddHHmm>-asr
+**rgnameasr** - resource group name for DR and testing resources. Defaults to rg-\<yyMMddHHmm>-asr
 
-adminUsername - operaring system admin password for deployed VMs. Defaults to 'BCDR'
+**adminUsername** - operaring system admin password for deployed VMs. Defaults to 'BCDR'
 
-adminPassword - Password for adminUsername account. Required, prompted for if not set.
+**adminPassword** - Password for adminUsername account. Required, prompted for if not set.
 
-policyDefinitionID - Azure Policy ID of builtin policy for ASR configuration on VMs. Default setting '/providers/Microsoft.Authorization/policyDefinitions/ac34a73f-9fa5-4067-9247-a3ecae514468'
+**policyDefinitionID** - Azure Policy ID of builtin policy for ASR configuration on VMs. Default setting '/providers/Microsoft.Authorization/policyDefinitions/ac34a73f-9fa5-4067-9247-a3ecae514468'
 
 ## Naming
 
