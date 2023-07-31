@@ -1,11 +1,13 @@
 // =========== main.bicep ===========
 
+// Define parameters for the deployment
 param prodlocation string = 'uksouth'
 param drlocation string = 'ukwest'
 param nameID string = utcNow('yyMMddHHmm')
 param rgName string = 'rg-${nameID}'
 param rgNameasr string = 'rg-${nameID}-asr'
 
+// Define parameters for the virtual machine
 @description('Username for the Virtual Machine.')
 param adminUsername string = 'bcdr'
 
@@ -14,8 +16,10 @@ param adminUsername string = 'bcdr'
 @secure()
 param adminPassword string
 
+// Define parameter for the policy definition ID
 param policyDefinitionID string = '/providers/Microsoft.Authorization/policyDefinitions/ac34a73f-9fa5-4067-9247-a3ecae514468'
 
+// Define an array of virtual machines
 var vms = [
   {
     name: 'vm-${nameID}-1'
@@ -29,7 +33,6 @@ var vms = [
   }
 ]
 
-
 // Setting target scope
 targetScope = 'subscription'
 
@@ -39,6 +42,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   location: prodlocation
 }
 
+// Creating resource group for ASR
 resource rgasr 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: rgNameasr
   location: drlocation
@@ -84,6 +88,7 @@ params: {
 
 }
 
+// Create virtual network peering between production and DR vnets
 module peerProdDR './modules/vnetpeer.bicep' = {
   name: 'vnet-peer-prod-dr-${nameID}'
   scope: rg
@@ -110,6 +115,7 @@ module peerDRProd './modules/vnetpeer.bicep' = {
   ]
 }
 
+// Deploying Recovery Services Vault for backup
 module backupRSV './modules/rsv.bicep' = {
   name: 'deploy-backup-rsv-${nameID}'
   scope: rg
@@ -120,6 +126,7 @@ module backupRSV './modules/rsv.bicep' = {
 
 }
 
+// Deploying Recovery Services Vault for DR
 module drRSV './modules/rsv.bicep' = {
   name: 'deploy-dr-rsv-${nameID}'
   scope: rgasr
@@ -130,6 +137,7 @@ module drRSV './modules/rsv.bicep' = {
 
 }
 
+// Deploying ASR policy
 module drpol './modules/asrpolicy.bicep' =  {
   name: 'deploy-dr-policy-${nameID}'
   scope: rg
@@ -150,6 +158,7 @@ module drpol './modules/asrpolicy.bicep' =  {
   
 }
 
+// Assigning role to the ASR policy
 module sourceRole './modules/asrpolicyroleassignement.bicep' = {
   name: 'role-assignment-${nameID}'
   params: {
@@ -174,6 +183,7 @@ module taregtRole './modules/asrpolicyroleassignement.bicep' = {
   ]
 }
 
+// Deploying public IPs for DR virtual machines
 module publicips './modules/publicIP.bicep' =  [for i in vms:{
   name: 'pip-deploy-vm-${i.name}'
   scope: rgasr
@@ -187,7 +197,7 @@ module publicips './modules/publicIP.bicep' =  [for i in vms:{
   
 }]
 
-// Deploying vm using module
+// Deploying virtual machines
 module winvm './modules/bcdr-windows.bicep' =  [for i in vms:{
   name: 'deploy-vm-${i.name}'
   scope: rg 
@@ -211,7 +221,7 @@ module winvm './modules/bcdr-windows.bicep' =  [for i in vms:{
   
 }]
 
-
+// Deploying traffic manager
 module trafficmanager './modules/trafficmanager.bicep' = {
   name: 'deploy-trafficmanager-${nameID}'
   scope: rg

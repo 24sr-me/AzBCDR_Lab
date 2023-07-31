@@ -3,6 +3,22 @@
   Defult username bcdr
   Password to be passed via paramater
 
+  Parameters:
+  - adminUsername: Username for the Virtual Machine.
+  - adminPassword: Password for the Virtual Machine.
+  - vmName: Name of the virtual machine.
+  - OSVersion: The Windows version for the VM. This will pick a fully patched image of this given Windows version.
+  - vmSize: Size of the virtual machine.
+  - location: Location for all resources.
+  - subnetName: Name of the subnet where the VM will be created.
+  - virtualNetworkName: Name of the virtual network where the VM will be created.
+  - vaultName: Name of the Recovery Services vault.
+  - rsvid: ID of the Recovery Services vault.
+  - ip: IP address for the VM.
+
+  Outputs:
+  - outpublicIP: Public IP address of the VM.
+  - outID: ID of the public IP address resource.
 */
 
 @description('Username for the Virtual Machine.')
@@ -40,8 +56,7 @@ var backupPolicyName = 'DefaultPolicy'
 var protectionContainer = 'iaasvmcontainer;iaasvmcontainerv2;${resourceGroup().name};${vmName}'
 var protectedItem = 'vm;iaasvmcontainerv2;${resourceGroup().name};${vmName}'
 
-
-
+// Create public IP address resource
 resource publicIp 'Microsoft.Network/publicIPAddresses@2022-05-01' = {
   name: publicIpName
   location: location
@@ -56,8 +71,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2022-05-01' = {
   }
 }
 
-
-
+// Create network interface resource
 resource nic 'Microsoft.Network/networkInterfaces@2022-05-01' = {
   name: nicName
   location: location
@@ -82,6 +96,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2022-05-01' = {
 
 }
 
+// Create virtual machine resource
 resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: vmName
   location: location
@@ -124,6 +139,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
 
 }
 
+// Create backup protection for the virtual machine
 resource vaultName_backupFabric_protectionContainer_protectedItem 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems@2020-02-02' = {
   name: '${vaultName}/${backupFabric}/${protectionContainer}/${protectedItem}'
   properties: {
@@ -133,6 +149,7 @@ resource vaultName_backupFabric_protectionContainer_protectedItem 'Microsoft.Rec
   }
 }
 
+// Enable IIS on the virtual machine
 resource vmFEIISEnabled 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' = {
   name: 'vm-EnableIIS-Script-${vmName}'
   location: location
@@ -177,5 +194,6 @@ set-Content -Path "C:\inetpub\wwwroot\iisstart.htm" -Value $html
   }
 }
 
+// Output the public IP address and ID
 output outpublicIP string = publicIp.properties.ipAddress
 output outID string = publicIp.id
