@@ -11,7 +11,7 @@ The following resources will be deployed:
 - Recovery Services Vault in second region used for Azure Site Recovery replication of Virtual Machines.
 - Traffic Manager for automatic failover of users between production and DR
 - Public IP addresses to be used for Virtual Machines in both production, DR and testing.
-- Network Security Groups in both production and DR, attched to subnets.
+- Network Security Groups in both production and DR, attached to subnets.
 - assignment of built in policy "Configure disaster recovery on virtual machines by enabling replication via Azure Site Recovery".
 
 The logical layout for the deployment is shown below.
@@ -23,7 +23,7 @@ The logical layout for the deployment is shown below.
 ### Powershell
 
 - Log in to Azure using ```Connect-AzAccount```
-- Set the taregt subscription using ```Set-AzSubscription```
+- Set the target subscription using ```Set-AzSubscription```
 - Deploy from template with ```New-AzSubscriptionDeployment -TemplateFile main.bicep```
 - Input target region for production
 - Input password for Virtual Machines
@@ -31,7 +31,7 @@ The logical layout for the deployment is shown below.
 ### Azure CLI
 
 - Log in to Azure using ```az login```
-- Set the taregt subscription using ```az account set```
+- Set the target subscription using ```az account set```
 - Deploy from template with ```az deployment sub create --location <prod_location> --template-file .\main.bicep```
 - Input password for Virtual Machines
 
@@ -57,7 +57,7 @@ Prior to testing collect the following information from the deployment:
   - traf-\<namdID> collect DNS name
   - vm-\<namdID>-1 and vm-\<namdID>-1 collect Public IP address
 - From rg-\<nameID>-asr
-  - pip-dr-\<namdID>-1 amd pip-dr-\<namdID>-2
+  - pip-dr-\<namdID>-1 and pip-dr-\<namdID>-2
 
 ## Pre-Failover Test
 Open a web browser and connect on port 80 to the DNS name of the traffic manager and both VM public IPs. VMs should display their own name and the region they are running from. Traffic Manager should rotate between both servers.
@@ -68,7 +68,7 @@ Below shows an example output of the webapp.
 
 ## Test Failover
 In the Azure Portal browse to a **demo VM > Operations > Disaster Recovery**. Along the top menu bar select **Test Failover**. Use teh default settings for test.
-Monitor the from portal. Once failover is complete connect to the relevant pubic IP address of the failed over server from a web browser on port 80. Server nam should be dispalyed with the recovery region.
+Monitor the from portal. Once failover is complete connect to the relevant pubic IP address of the failed over server from a web browser on port 80. Server nam should be displayed with the recovery region.
 In Azure portal select Clean Up Failover
 
 ## Live Failover
@@ -77,17 +77,17 @@ Monitor from portal. Once failover is complete connect to Traffic Manager to sho
 
 ## Clean-up
 
-To remove the demo environment backup and repliaction first need disabling:
+To remove the demo environment backup and replication first need disabling:
 
 - Remove backup
   - Browse to production RSV
   - Under select **Protected Items > Backup Items > Azure Virtual Machines**
-  - For each VM select the elipsis (...) > **Stop Backup**
+  - For each VM select the ellipsis (...) > **Stop Backup**
   - Select Delete backup data, enter server name and give a reason
 - Remove replication
   - Browse to recovery RSV
   - Under select **Protected Items > Replicated Items**
-  - For each VM select the elipsis (...) > **Disable Replication**
+  - For each VM select the ellipsis (...) > **Disable Replication**
 - Delete both resource groups
 
 # Details
@@ -104,7 +104,7 @@ To remove the demo environment backup and repliaction first need disabling:
 
 **rgnameasr** - resource group name for DR and testing resources. Defaults to rg-\<yyMMddHHmm>-asr
 
-**adminUsername** - operaring system admin password for deployed VMs. Defaults to 'BCDR'
+**adminUsername** - operating system admin password for deployed VMs. Defaults to 'BCDR'
 
 **adminPassword** - Password for adminUsername account. Required, prompted for if not set.
 
@@ -112,7 +112,7 @@ To remove the demo environment backup and repliaction first need disabling:
 
 ## Naming
 
-All resource names are based off the nameID paramater. The default value is teh current date/time in yyMMddHHmm. The format of all names is:
+All resource names are based off the nameID parameter. The default value is teh current date/time in yyMMddHHmm. The format of all names is:
 
 \<type>-\<nameID>-\<suffix>
 
@@ -120,7 +120,7 @@ Type denotes the resource type using [Microsoft provided abbriviations](https://
 
 ## Resource Groups
 
-Resource Groups are created in the defined production and DR locations. These are created using the names defined by the paramaters, if not set they will be named rg-\<yyMMddHHmm> and rg-\<yyMMddHHmm>-asr
+Resource Groups are created in the defined production and DR locations. These are created using the names defined by the parameters, if not set they will be named rg-\<yyMMddHHmm> and rg-\<yyMMddHHmm>-asr
 
 ## Virtual Networks
 
@@ -129,8 +129,8 @@ Three virtual networks are created, one in production and two in DR with the fol
  &nbsp; | Production | Disaster Recovery | Testing
 --- | --- | --- | ---
 Name | vnet-\<nameID>-prod | vnet-\<nameID>-dr | vnet-\<nameID>-test
-Subet | default | default | default
-Location | producton | DR | DR
+Subnet | default | default | default
+Location | production | DR | DR
 Address Prefix | 10.1.0.0/24 | 10.2.0.0/24 | 10.3.0.0/24
 Remote Peer | vnet-\<nameID>-dr | vnet-\<nameID>-prod | none
 
@@ -146,7 +146,7 @@ Two Recovery Service Vaults are deployed. One in production used for backup of v
 
 The built in Policy "Configure disaster recovery on virtual machines by enabling replication via Azure Site Recovery" is assigned on the production resource group and configured to enable replication for both deployed VMs to the second region.
 
-To facilitate remediation a system managed idenity is created and assigned owner to the two created resource groups.
+To facilitate remediation a system managed identity is created and assigned owner to the two created resource groups.
 
 ## Public IPs
 
@@ -158,7 +158,7 @@ Two VMs are deployed to the production region. Each VM contains a web page which
 
 Private IP address are dynamic. Public IPs are created as part of the VM template.
 
-As VMs are created they are added to backup to the production region RSV. 
+As VMs are created they are added to backup to the production region RSV.
 
 ## Traffic Manager
 
