@@ -14,6 +14,8 @@ The following resources will be deployed:
 - Network Security Groups in both production and DR, attched to subnets.
 - assignment of built in policy "Configure disaster recovery on virtual machines by enabling replication via Azure Site Recovery".
 
+The logical layout for the deployment is shown below.
+
 ![Logical Layout](scr/layout.jpg)
 
 ## Deployment
@@ -58,7 +60,11 @@ Prior to testing collect the following information from the deployment:
   - pip-dr-\<namdID>-1 amd pip-dr-\<namdID>-2
 
 ## Pre-Failover Test
-Open a web browser and connect on port 80 to the DNS name of the traffic manager and both VM public IPs. VMs should display their own name and the region they are running from. Traffic Manager should rotate between both servers
+Open a web browser and connect on port 80 to the DNS name of the traffic manager and both VM public IPs. VMs should display their own name and the region they are running from. Traffic Manager should rotate between both servers.
+
+Below shows an example output of the webapp.
+
+![Logical Layout](scr\webspp-prod.png)
 
 ## Test Failover
 In the Azure Portal browse to a **demo VM > Operations > Disaster Recovery**. Along the top menu bar select **Test Failover**. Use teh default settings for test.
