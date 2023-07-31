@@ -1,9 +1,8 @@
 /*
-  create a single standalone VM with own virtual network. No public IP
-  Defult username stu
+  create a single standalone VM in existing VNET and subnet. Public IP address is created and attached to the VM.
+  Defult username bcdr
   Password to be passed via paramater
 
-  current date used in all names for uniqueness in ddMMyyhhmm format  
 */
 
 @description('Username for the Virtual Machine.')
