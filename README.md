@@ -64,7 +64,7 @@ Open a web browser and connect on port 80 to the DNS name of the traffic manager
 
 Below shows an example output of the webapp.
 
-![App Screenshot](scr\webapp-prod.jpeg)
+![App Screenshot](scr\webapp-prod.jpg)
 
 ## Test Failover
 In the Azure Portal browse to a **demo VM > Operations > Disaster Recovery**. Along the top menu bar select **Test Failover**. Use teh default settings for test.
