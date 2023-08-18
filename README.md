@@ -64,7 +64,7 @@ Open a web browser and connect on port 80 to the DNS name of the traffic manager
 
 Below shows an example output of the webapp.
 
-![Logical Layout](scr\webspp-prod.png)
+![App Screenshot](scr\webapp-prod.jpeg)
 
 ## Test Failover
 In the Azure Portal browse to a **demo VM > Operations > Disaster Recovery**. Along the top menu bar select **Test Failover**. Use teh default settings for test.
@@ -150,7 +150,7 @@ To facilitate remediation a system managed identity is created and assigned owne
 
 ## Public IPs
 
-Four public IPs are created, one for each VM in each location. Production public IPs are created with the virtual machines. DR public IPs are created seprately so they are pre-created for failover.
+Four public IPs are created, one for each VM in each location. Production public IPs are created with the virtual machines. DR public IPs are created separately so they are pre-created for failover.
 
 ## Virtual Machines
 
