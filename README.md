@@ -1,3 +1,4 @@
+[![Board Status](https://24sr.visualstudio.com/5f53daba-a174-4104-a7c5-fc9cc66c4ed9/2a6bb825-345a-47a8-94f8-4cee1ad8bf0a/_apis/work/boardbadge/d36f4611-f62c-4e24-abc9-aa3576c6c081)](https://24sr.visualstudio.com/5f53daba-a174-4104-a7c5-fc9cc66c4ed9/_boards/board/t/2a6bb825-345a-47a8-94f8-4cee1ad8bf0a/Microsoft.RequirementCategory)
 # Azure BCDR Lab
 
 This repo contains the required bicep files to deploy a full lab environment for backup and disaster recovery testing/demo.
